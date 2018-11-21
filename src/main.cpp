@@ -2,6 +2,7 @@
 #include <fstream>
 #include <array>
 #include <vector>
+#include <algorithm>
 
 //class BasePair
 //{
@@ -94,26 +95,21 @@ public:
 
 
 
-class Node
-{
-    
-};
-
-
 class PairNode
 {
 public:
     int count;
 };
 
-class Prev
+class NodePtr
 {
 public:
     bool codeLine;
     int index;
-    Prev(bool _codeLine, int _index):
-    codeLine(_codeLine), index(_index)
-    {}
+    NodePtr(bool _codeLine, int _index):
+        codeLine(_codeLine), index(_index)
+    {
+    }
     
 };
 
@@ -126,9 +122,22 @@ public:
     uint8_t code;  // code to pack
     
     Prev prev[2];
+    
+    bool operator < (const CommonNode& other) const
+    {
+        return count < other.count;
+    }
 };
 
-
+class BitCode
+{
+    std::vector<bool> data;
+public:
+    void addBit(int value)
+    {
+        data.push_back(value != 0);
+    }
+};
 
 class Tree
 {
@@ -142,39 +151,37 @@ public:
         nodes = pairs;
         
     }
-    
-    void processStatistic()
-    {
 
-    }
     
-    void findMinNodes()
+    void connectNodes( const NodePtr &ptr1, const NodePtr &ptr2)
     {
+        
         
     }
     
-    // find tow miximum values
+    
+    // find two minimum values
     // Just to test
-    void findMax()
+    void findMin()
     {
         //--------------------------------
-        std::vector<Prev> compare;
+        std::vector<NodePtr> compare;
         
         for( int k = 0; k < 2 && k < codeLine.size(); k++ )
         {
-            compare.push_back( Prev(true, k) );
+            compare.push_back( NodePtr(true, k) );
         }
         
         //--------------------------------
         for( int k = 0; k < 2 && k < treeNodes.size(); k++ )
         {
-            compare.push_back( Prev(false, k) );
+            compare.push_back( NodePtr(false, k) );
         }
         
         
         if( compare.size() >= 2 )
         {
-            //sort
+            sort( compare.begin(), compare.end() );
             
             // connect maximum
             
@@ -190,12 +197,7 @@ public:
         
     }
     
-    void  connectNodes()
-    {
-        
-    }
-    
-    
+
     
 
 
@@ -226,7 +228,7 @@ public:
         while( file.get(value) && buffer.size() < max_size )
         {
             int v = value;
-            if( v < 0 ) v = 256 + v;
+            if( v < 0 ) v += 256;
             buffer.push_back(v);
             std::cout << "pv=" << std::hex <<v << std::endl;
         }
