@@ -104,9 +104,9 @@ public:
 class NodePtr
 {
 public:
-    bool codeLine;
+    int codeLine;
     int index;
-    NodePtr(bool _codeLine, int _index):
+    NodePtr(int _codeLine, int _index):
         codeLine(_codeLine), index(_index)
     {
     }
@@ -143,18 +143,28 @@ class Tree
 {
 public:
     
-    std::vector<CommonNode> codeLine;
-    std::vector<CommonNode> treeNodes;
+    //std::vector<CommonNode> codeLine;
+    std::vector<CommonNode> treeNodes[2];
     
+
     void addPairs(const std::vector<Pair> &pairs)
     {
         nodes = pairs;
-        
     }
 
+    CommonNode& getNode(NodePtr &ptr)
+    {
+        return treeNodes[ptr.codeLine][ptr.index];
+    }
     
     void connectNodes( const NodePtr &ptr1, const NodePtr &ptr2)
     {
+        CommonNode newNode;
+        newNode.count = getNode(ptr1).count + getNode(ptr2).count;
+        newNode.codeLine = false;
+        
+        treeNodes[1].push_back(newNode);
+        
         
         
     }
@@ -164,32 +174,24 @@ public:
     // Just to test
     void findMin()
     {
-        //--------------------------------
         std::vector<NodePtr> compare;
         
-        for( int k = 0; k < 2 && k < codeLine.size(); k++ )
+        for( int line = 0; line < 2; line++ )
         {
-            compare.push_back( NodePtr(true, k) );
+            for( int k = 0; k < 2 && k < treeNodes[line].size(); k++ )
+            {
+                compare.push_back( NodePtr(line == 0, k) );
+            }
         }
-        
-        //--------------------------------
-        for( int k = 0; k < 2 && k < treeNodes.size(); k++ )
-        {
-            compare.push_back( NodePtr(false, k) );
-        }
-        
         
         if( compare.size() >= 2 )
         {
             sort( compare.begin(), compare.end() );
-            
-            // connect maximum
-            
-            
+            connectNodes(compare[0], compare[1]);
         }
         else
         {
-            // tree was build
+            // tree was builded
         }
         
         
