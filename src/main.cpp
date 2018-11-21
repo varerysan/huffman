@@ -3,7 +3,6 @@
 #include <array>
 #include <vector>
 
-
 //class BasePair
 //{
 //public:
@@ -101,13 +100,33 @@ class Node
 };
 
 
-
 class PairNode
 {
 public:
     int count;
 };
 
+class Prev
+{
+public:
+    bool codeLine;
+    int index;
+    Prev(bool _codeLine, int _index):
+    codeLine(_codeLine), index(_index)
+    {}
+    
+};
+
+class CommonNode
+{
+public:
+    bool used;
+    int count;
+    bool codeLine;
+    uint8_t code;  // code to pack
+    
+    Prev prev[2];
+};
 
 
 
@@ -115,8 +134,8 @@ class Tree
 {
 public:
     
-    std::vector<PairNode> nodes;
-    std::vector<PairNode> nodes2;
+    std::vector<CommonNode> codeLine;
+    std::vector<CommonNode> treeNodes;
     
     void addPairs(const std::vector<Pair> &pairs)
     {
@@ -127,7 +146,6 @@ public:
     void processStatistic()
     {
 
-
     }
     
     void findMinNodes()
@@ -136,11 +154,49 @@ public:
     }
     
     // find tow miximum values
+    // Just to test
     void findMax()
     {
+        //--------------------------------
+        std::vector<Prev> compare;
+        
+        for( int k = 0; k < 2 && k < codeLine.size(); k++ )
+        {
+            compare.push_back( Prev(true, k) );
+        }
+        
+        //--------------------------------
+        for( int k = 0; k < 2 && k < treeNodes.size(); k++ )
+        {
+            compare.push_back( Prev(false, k) );
+        }
+        
+        
+        if( compare.size() >= 2 )
+        {
+            //sort
+            
+            // connect maximum
+            
+            
+        }
+        else
+        {
+            // tree was build
+        }
+        
+        
         
         
     }
+    
+    void  connectNodes()
+    {
+        
+    }
+    
+    
+    
 
 
 };
