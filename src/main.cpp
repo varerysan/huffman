@@ -139,6 +139,18 @@ public:
     }
 };
 
+// Line with nodes with codes
+class CodeLine
+{
+public:
+    std::vector<CommonNode> nodes;
+    int pos;
+    CodeLine(): pos(-1)
+    {}
+
+
+};
+
 class Tree
 {
 public:
@@ -165,6 +177,9 @@ public:
         
         treeNodes[1].push_back(newNode);
         
+        // Change nodes which was connected
+        getNode(ptr1).used = true;
+        getNode(ptr2).used = true;
         
         
     }
