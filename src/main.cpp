@@ -4,12 +4,6 @@
 #include <vector>
 #include <algorithm>
 
-//class BasePair
-//{
-//public:
-//    int count;
-//};
-
 class Pair
 {
 public:
@@ -31,7 +25,7 @@ public:
 class Statistics
 {
 public:
-    std::array<int,256> stat;
+    std::array<int, 256> stat;
     
     void clear()
     {
@@ -42,7 +36,6 @@ public:
     {
         clear();
     }
-    
     
     void addData( const std::vector<uint8_t> data )
     {
@@ -145,11 +138,26 @@ class CodeLine
 public:
     std::vector<CommonNode> nodes;
     int pos;
-    CodeLine(): pos(-1)
+    CodeLine(): pos(0)
     {}
+    
+    void tryGetTwoMinimum( std::vector<NodePtr> &result)
+    {
+        for( int k = pos; (k < pos + 2) && (k < nodes.size()); k++ )
+        {
+            result.push_back( NodePtr(false, k) );
+        }
+    }
 
+    void removeFirst()
+    {
+        pos++;
+    }
 
 };
+
+
+
 
 class Tree
 {
