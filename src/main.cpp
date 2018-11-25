@@ -47,8 +47,7 @@ public:
         copyToPairs();
         sort(statPairs.begin(), statPairs.end() );
         std::cout << "----------3------------" << std::endl;
-        printPairs();
-        
+        printPairs();        
     }
     
     void print()
@@ -85,7 +84,6 @@ public:
         }
     }
 };
-
 
 
 class PairNode
@@ -157,8 +155,6 @@ public:
 };
 
 
-
-
 class Tree
 {
 public:
@@ -187,9 +183,7 @@ public:
         
         // Change nodes which was connected
         getNode(ptr1).used = true;
-        getNode(ptr2).used = true;
-        
-        
+        getNode(ptr2).used = true;        
     }
     
     
@@ -216,16 +210,9 @@ public:
         {
             // tree was builded
         }
-        
-        
-        
-        
+             
     }
     
-
-    
-
-
 };
 
 
