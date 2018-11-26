@@ -69,8 +69,14 @@ public:
     int codeIterator;
     int innerIterator;
     
-
     
+    void setCodeLine(std::vector<CodeNode> nodes)
+    {
+        codeLine = nodes;
+        init();
+        innerLine.clear();
+    }
+
     void init()
     {
         codeIterator = 0;
@@ -138,7 +144,9 @@ public:
     
     void buildTree()
     {
-        
+        while(connectMin())
+        {
+        }
     }
     
     
@@ -193,6 +201,32 @@ public:
         std::cout << "----------3------------" << std::endl;
         printPairs();        
     }
+    
+    std::vector<CodeNode> getCodeNodes()
+    {
+        // CodeNode:
+        //uint8_t code;
+        //int count;
+        
+        // Pair:
+        //uint8_t value;
+        //int count;
+        
+        std::vector<CodeNode> create;
+        
+        for(auto &pair: statPairs)
+        {
+            CodeNode node;
+            node.count = pair.count;
+            node.code = pair.value;
+            create.push_back(node);
+        }
+        
+        return create;
+    }
+
+
+
     
     void print()
     {
@@ -409,6 +443,10 @@ public:
         }
         
         statistics.addData(buffer);
+        
+        std::vector<CodeNode> nodes = statistics.getCodeNodes();
+        
+        tree.setCodeLine(nodes);
         
         
     }
