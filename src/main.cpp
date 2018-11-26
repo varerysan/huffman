@@ -85,6 +85,13 @@ public:
     
     int getNodeCount(const NodePtr& ptr)
     {
+        std::cout << "--- Begin getNodeCount(..) ---" << std::endl;
+        
+        std::cout << "codeLine.size()=" << codeLine.size() << std::endl;
+        std::cout << "innerLine()=" << innerLine.size() << std::endl;
+
+        std::cout << "pos=" << ptr.pos << std::endl;
+
         if (ptr.codeLine)
             return codeLine[ptr.pos].count;
         else
@@ -101,52 +108,133 @@ public:
     
     void connectTwoNodes(const NodePtr& ptr1, const NodePtr& ptr2)
     {
+        std::cout << "--- Begin connectTwoNodes(..) ---" << std::endl;
         int count1 = getNodeCount(ptr1);
         int count2 = getNodeCount(ptr2);
 
+        std::cout << "--- connectTwoNodes test-1" << std::endl;
+
         useNode(ptr1);
         useNode(ptr2);
-        
+
+        std::cout << "--- connectTwoNodes test-2" << std::endl;
+
         InnerNode newNode(ptr1, ptr2, count1 + count2);
         
+        std::cout << "--- connectTwoNodes test-3" << std::endl;
+
+        
         innerLine.push_back(newNode);
+        
+        std::cout << "--- End connectTwoNodes(...) ---" << std::endl;
+
     }
     
     bool connectMin()
     {
+        std::cout << " begin connectMin() " << std::endl;
         std::vector<NodePtr> compare;
-        compare.reserve(4);
+        //compare.reserve(4);
         
         for( int k = codeIterator; k < codeIterator + 2 && k < codeLine.size(); k++ )
         {
-            compare.push_back( NodePtr(false, k, codeLine[k].count ) );
+            compare.push_back( NodePtr(true, k, codeLine[k].count ) );
         }
         
         for( int k = innerIterator; k < innerIterator + 2 && k < innerLine.size(); k++ )
         {
-            compare.push_back( NodePtr(true, k, innerLine[k].count ) );
+            compare.push_back( NodePtr(false, k, innerLine[k].count ) );
         }
         
+        std::cout << "--- compare show ---" << std::endl;
+        int id = 0;
+        for( auto c: compare )
+        {
+            // bool codeLine; // is it code line. true - code Line, false - inner Line
+            // int pos;
+            // int count;
+            std::cout << "id=" << id
+                      << " count=" << c.count
+                      << " codeLine=" << c.codeLine
+                      << " pos=" << c.pos << std::endl;
+            
+            id++;
+            
+        }
+        std::cout << "--- compare end ---" << std::endl;
+
         
         if( compare.size() >= 2 )
         {
+            std::cout << "--- compare.size() >= 2. Before sort" << std::endl;
+
             sort(compare.begin(), compare.end());
+            
+            std::cout << "--- After sort" << std::endl;
+
             connectTwoNodes(compare[0], compare[1]);
             
+            std::cout << "--- return true " << std::endl;
+
             return true;
         }
         else
         {
+            std::cout << "--- compare.size() < 2 " << std::endl;
+
             // tree was built
+            
+            std::cout << "--- return false " << std::endl;
+
             return false;
         }
     }
     
     void buildTree()
     {
+        std::cout << "--- buildTree ---" << std::endl;
         while(connectMin())
         {
         }
+    }
+    
+    
+    void print()
+    {
+        //std::vector<InnerNode> innerLine;
+        
+        std::cout << "----- codeLine line -----" << std::endl;
+        for( auto &node: codeLine )
+        {
+            int count  = node.count;
+            std::cout << "c=" << count << std::endl;
+        }
+        std::cout << "----------------------" << std::endl;
+
+        
+        std::cout << "----- Inner line -----" << std::endl;
+        for( auto &node: innerLine )
+        {
+            int count  = node.count;
+            //int count;
+            //NodePtr prev[2];
+            int pos1 = node.prev[0].pos;
+            int pos2 = node.prev[1].pos;
+            bool c1 = node.prev[0].codeLine;
+            bool c2 = node.prev[1].codeLine;
+
+            std::cout << "c=" << count
+                      << " pos1=" << pos1
+                      << "(" << c1 << ")"
+                      << " pos2=" << pos2
+                      << "(" << c2 << ")"
+
+
+            << std::endl;
+        }
+        std::cout << "----------------------" << std::endl;
+        
+        
     }
     
     
@@ -169,7 +257,7 @@ public:
     
     bool operator < ( const Pair &other ) const
     {
-        return count > other.count;
+        return count < other.count;
     }
 };
 
@@ -439,14 +527,36 @@ public:
             int v = value;
             if( v < 0 ) v += 256;
             buffer.push_back(v);
-            std::cout << "pv=" << std::hex <<v << std::endl;
+            std::cout << "pv=" << std::hex << v << std::dec << std::endl;
         }
         
         statistics.addData(buffer);
         
         std::vector<CodeNode> nodes = statistics.getCodeNodes();
         
+        //-----------
+        nodes.clear();
+        nodes.push_back(CodeNode({'A',1}));
+        nodes.push_back(CodeNode({'B',1}));
+        nodes.push_back(CodeNode({'C',3}));
+        nodes.push_back(CodeNode({'D',5}));
+        nodes.push_back(CodeNode({'E',5}));
+        nodes.push_back(CodeNode({'D',7}));
+
+
+        
+        
+        //-----------
+        
         tree.setCodeLine(nodes);
+        tree.print();
+        
+        tree.buildTree();
+        
+        std::cout << "--- After build ---" << std::endl;
+        
+        tree.print();
+
         
         
     }
@@ -462,7 +572,7 @@ public:
         for(const auto &v : buffer)
         {
             int k = v;
-            std::cout << pos << " k=" << std::hex << k << std::endl;
+            std::cout << pos << " k=" << std::hex << k << std::dec << std::endl;
             pos++;
         }
         std::cout << "-----------1-----------" << std::endl;
