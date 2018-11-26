@@ -233,8 +233,37 @@ public:
             << std::endl;
         }
         std::cout << "----------------------" << std::endl;
+    }
+    
+    void processNodePath()
+    {
         
+    
+    }
+    
+    void createTreeCodes()
+    {
+        std::cout << "Begin createTreeCodes()" << std::endl;
+        //    int count;
+        // NodePtr prev[2];
         
+        auto &startNode = innerLine[innerLine.size()-1];
+        int count = startNode.count;
+        NodePtr &ptr1 = startNode.prev[0];
+        NodePtr &ptr2 = startNode.prev[1];
+        
+        int pos1 = ptr1.pos;
+        int pos2 = ptr2.pos;
+        
+        std::cout << "count=" << count << std::endl;
+        std::cout << "pos1=" << pos1 << std::endl;
+        std::cout << "pos2=" << pos2 << std::endl;
+
+
+        std::cout << "End createTreeCodes()" << std::endl;
+
+        
+
     }
     
     
@@ -492,7 +521,6 @@ public:
         while(connectMins())
         {
         }
-        
     }
     
 };
@@ -556,6 +584,10 @@ public:
         std::cout << "--- After build ---" << std::endl;
         
         tree.print();
+        
+        tree.createTreeCodes();
+        
+        //
 
         
         
@@ -576,7 +608,7 @@ public:
             pos++;
         }
         std::cout << "-----------1-----------" << std::endl;
-        statistics.print();
+        //statistics.print();
         std::cout << "-----------2-----------" << std::endl;
         statistics.printPairs();
     }
