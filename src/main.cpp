@@ -13,11 +13,22 @@ class NodePtr
 public:
     bool codeLine; // is it code line. true - code Line, false - inner Line
     int pos;
+    int count;
     
-    NodePtr(bool _codeLine, int _pos):
-        codeLine(_codeLine), pos(_pos)
+    NodePtr(bool _codeLine, int _pos, int _count):
+        codeLine(_codeLine), pos(_pos), count(_count)
     {
     }
+    
+    NodePtr()
+    {
+    }
+    
+    bool operator < (const NodePtr& other) const
+    {
+        return count < other.count;
+    }
+    
 };
 
 
@@ -34,26 +45,36 @@ class InnerNode
 public:
     int count;
     NodePtr prev[2];
+    
+    InnerNode(const NodePtr& ptr1, const NodePtr& ptr2, int _count)
+    {
+        prev[0] = ptr1;
+        prev[1] = ptr2;
+        count = _count;
+    }
 };
 
 
-class Data
+class Tree
 {
+public:
+    Tree()
+    {
+        init();
+    }
+
     std::vector<CodeNode> codeLine;
     std::vector<InnerNode> innerLine;
     
     int codeIterator;
     int innerIterator;
     
+
+    
     void init()
     {
         codeIterator = 0;
         innerIterator = 0;
-    }
-    
-    void getNode(NodePtr& ptr)
-    {
-        
     }
     
     int getNodeCount(const NodePtr& ptr)
@@ -64,41 +85,59 @@ class Data
             return innerLine[ptr.pos].count;
     }
     
+    void useNode(const NodePtr& ptr)
+    {
+        if( ptr.codeLine )
+            codeIterator++;
+        else
+            innerIterator++;
+    }
+    
+    void connectTwoNodes(const NodePtr& ptr1, const NodePtr& ptr2)
+    {
+        int count1 = getNodeCount(ptr1);
+        int count2 = getNodeCount(ptr2);
+
+        useNode(ptr1);
+        useNode(ptr2);
+        
+        InnerNode newNode(ptr1, ptr2, count1 + count2);
+        
+        innerLine.push_back(newNode);
+    }
+    
     bool connectMin()
     {
-        std::vactor<int> compare;
+        std::vector<NodePtr> compare;
         compare.reserve(4);
-                
+        
         for( int k = codeIterator; k < codeIterator + 2 && k < codeLine.size(); k++ )
         {
-            compare.push_back( NodePtr(false, k) );
+            compare.push_back( NodePtr(false, k, codeLine[k].count ) );
         }
         
         for( int k = innerIterator; k < innerIterator + 2 && k < innerLine.size(); k++ )
         {
-            compare.push_back( NodePtr(true, k) );
+            compare.push_back( NodePtr(true, k, innerLine[k].count ) );
         }
         
-        
-        for( int line = 0; line < 2; line++ )
-        {
-            for( int k = 0; k < 2 && k < treeNodes[line].size(); k++ )
-            {
-                compare.push_back( NodePtr(line, k) );
-            }
-        }
         
         if( compare.size() >= 2 )
         {
-            sort( compare.begin(), compare.end() );
-            connectNodes(compare[0], compare[1]);
+            sort(compare.begin(), compare.end());
+            connectTwoNodes(compare[0], compare[1]);
+            
+            return true;
         }
         else
         {
-            // tree was builded
-            return true;
+            // tree was built
+            return false;
         }
-        
+    }
+    
+    void buildTree()
+    {
         
     }
     
@@ -190,7 +229,7 @@ public:
     }
 };
 
-
+#if 0
 class PairNode
 {
 public:
@@ -208,7 +247,9 @@ public:
     }
     
 };
+#endif
 
+#if 0
 class CommonNode
 {
 public:
@@ -224,7 +265,9 @@ public:
         return count < other.count;
     }
 };
+#endif
 
+#if 0
 class BitCode
 {
     std::vector<bool> data;
@@ -234,7 +277,9 @@ public:
         data.push_back(value != 0);
     }
 };
+#endif
 
+#if 0
 // Line with nodes with codes
 class CodeLine
 {
@@ -258,8 +303,9 @@ public:
     }
 
 };
+#endif
 
-
+#if 0
 class Tree
 {
 public:
@@ -328,12 +374,15 @@ public:
     }
     
 };
-
+#endif
 
 class Processor
 {
 public:
     Statistics statistics;
+    Tree tree;
+    
+    
     
     const int max_size = 65536;
     
@@ -360,6 +409,8 @@ public:
         }
         
         statistics.addData(buffer);
+        
+        
     }
     
     void processStatistics()
@@ -387,7 +438,7 @@ public:
 void read()
 {
     Processor processor;
-    processor.addFile("data.txt");
+    processor.addFile("../data.txt");
     processor.print();
     
     return;
