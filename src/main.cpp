@@ -4,6 +4,111 @@
 #include <vector>
 #include <algorithm>
 
+//---------------------
+// Just to test Node classes with or without codes
+
+
+class NodePtr
+{
+public:
+    bool codeLine; // is it code line. true - code Line, false - inner Line
+    int pos;
+    
+    NodePtr(bool _codeLine, int _pos):
+        codeLine(_codeLine), pos(_pos)
+    {
+    }
+};
+
+
+class CodeNode
+{
+public:
+    uint8_t code;
+    int count;
+};
+
+
+class InnerNode
+{
+public:
+    int count;
+    NodePtr prev[2];
+};
+
+
+class Data
+{
+    std::vector<CodeNode> codeLine;
+    std::vector<InnerNode> innerLine;
+    
+    int codeIterator;
+    int innerIterator;
+    
+    void init()
+    {
+        codeIterator = 0;
+        innerIterator = 0;
+    }
+    
+    void getNode(NodePtr& ptr)
+    {
+        
+    }
+    
+    int getNodeCount(const NodePtr& ptr)
+    {
+        if (ptr.codeLine)
+            return codeLine[ptr.pos].count;
+        else
+            return innerLine[ptr.pos].count;
+    }
+    
+    bool connectMin()
+    {
+        std::vactor<int> compare;
+        compare.reserve(4);
+                
+        for( int k = codeIterator; k < codeIterator + 2 && k < codeLine.size(); k++ )
+        {
+            compare.push_back( NodePtr(false, k) );
+        }
+        
+        for( int k = innerIterator; k < innerIterator + 2 && k < innerLine.size(); k++ )
+        {
+            compare.push_back( NodePtr(true, k) );
+        }
+        
+        
+        for( int line = 0; line < 2; line++ )
+        {
+            for( int k = 0; k < 2 && k < treeNodes[line].size(); k++ )
+            {
+                compare.push_back( NodePtr(line, k) );
+            }
+        }
+        
+        if( compare.size() >= 2 )
+        {
+            sort( compare.begin(), compare.end() );
+            connectNodes(compare[0], compare[1]);
+        }
+        else
+        {
+            // tree was builded
+            return true;
+        }
+        
+        
+    }
+    
+    
+    
+};
+
+
+//---------------------
+
 class Pair
 {
 public:
@@ -95,8 +200,8 @@ public:
 class NodePtr
 {
 public:
-    int codeLine;
-    int index;
+    int codeLine;// number of code line
+    int index; // index where it in line
     NodePtr(int _codeLine, int _index):
         codeLine(_codeLine), index(_index)
     {
@@ -124,7 +229,7 @@ class BitCode
 {
     std::vector<bool> data;
 public:
-    void addBit(int value)
+    void addBit(int value)// 0 or 1
     {
         data.push_back(value != 0);
     }
@@ -189,7 +294,7 @@ public:
     
     // find two minimum values
     // Just to test
-    void findMin()
+    bool connectMins()
     {
         std::vector<NodePtr> compare;
         
@@ -197,7 +302,7 @@ public:
         {
             for( int k = 0; k < 2 && k < treeNodes[line].size(); k++ )
             {
-                compare.push_back( NodePtr(line == 0, k) );
+                compare.push_back( NodePtr(line, k) );
             }
         }
         
@@ -209,8 +314,17 @@ public:
         else
         {
             // tree was builded
+            return true;
         }
              
+    }
+    
+    void createTree()
+    {
+        while(connectMins())
+        {
+        }
+        
     }
     
 };
