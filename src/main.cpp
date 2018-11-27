@@ -55,6 +55,29 @@ public:
 };
 
 
+class BitCode
+{
+    std::vector<bool> data;
+public:
+    void addBit(int value)// 0 or 1
+    {
+        data.push_back(value != 0);
+    }
+    
+    void print()
+    {
+        std::cout << "Code:";
+        for( auto d: data )
+        {
+            std::cout << (d?1:0);
+        }
+        
+        std::cout << std::endl;
+        
+    }
+};
+
+
 class Tree
 {
 public:
@@ -235,8 +258,47 @@ public:
         std::cout << "----------------------" << std::endl;
     }
     
-    void processNodePath()
+    // recursive function
+    void processNodePath(NodePtr& currNodePtr, BitCode currCode)
     {
+        currCode.print();
+        // BitCode
+        if( currNodePtr.codeLine )
+        {  // all found
+            std::cout << "Full code:";
+            currCode.print();
+            std::cout << std::endl;
+            return;
+        }
+        else
+        {
+            // NodePtr:
+            // bool codeLine; // is it code line. true - code Line, false - inner Line
+            // int pos;
+            // int count;
+            
+            // InnerNode:
+            // int count;
+            // NodePtr prev[2];
+            
+            InnerNode currNode = innerLine[currNodePtr.pos];
+            
+            NodePtr &ptr1 = currNode.prev[0];
+            
+            BitCode code1 = currCode;
+            code1.addBit(0);
+            processNodePath(ptr1, code1);
+            
+            
+            NodePtr &ptr2 = currNode.prev[1];
+            BitCode code2 = currCode;
+            code2.addBit(1);
+            processNodePath(ptr2, code2);
+
+            
+        }
+        
+        
         
     
     }
@@ -247,10 +309,10 @@ public:
         //    int count;
         // NodePtr prev[2];
         
-        auto &startNode = innerLine[innerLine.size()-1];
-        int count = startNode.count;
-        NodePtr &ptr1 = startNode.prev[0];
-        NodePtr &ptr2 = startNode.prev[1];
+        auto startNodePtr = innerLine[innerLine.size()-1];
+        int count = startNodePtr.count;
+        NodePtr &ptr1 = startNodePtr.prev[0];
+        NodePtr &ptr2 = startNodePtr.prev[1];
         
         int pos1 = ptr1.pos;
         int pos2 = ptr2.pos;
@@ -261,13 +323,16 @@ public:
 
 
         std::cout << "End createTreeCodes()" << std::endl;
+        
+        BitCode startCode;
+        
+        // NodePtr(bool _codeLine, int _pos, int _count)
+        NodePtr startCreateNodePtr = NodePtr(false,innerLine.size()-1,0);
+        processNodePath(startCreateNodePtr, startCode);
 
         
 
     }
-    
-    
-    
 };
 
 
@@ -418,17 +483,6 @@ public:
 };
 #endif
 
-#if 0
-class BitCode
-{
-    std::vector<bool> data;
-public:
-    void addBit(int value)// 0 or 1
-    {
-        data.push_back(value != 0);
-    }
-};
-#endif
 
 #if 0
 // Line with nodes with codes
