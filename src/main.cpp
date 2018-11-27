@@ -1,8 +1,13 @@
+// Author: Valery Mosyagin
+// github.com/varerysan
+
 #include <iostream>
 #include <fstream>
 #include <array>
 #include <vector>
 #include <algorithm>
+
+
 
 //---------------------
 // Just to test Node classes with or without codes
