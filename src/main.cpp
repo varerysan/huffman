@@ -8,6 +8,29 @@
 // Just to test Node classes with or without codes
 
 
+class BitCode
+{
+    std::vector<bool> data;
+public:
+    void addBit(int value)// 0 or 1
+    {
+        data.push_back(value != 0);
+    }
+    
+    void print()
+    {
+        std::cout << "Code:";
+        for( auto d: data )
+        {
+            std::cout << (d?1:0);
+        }
+        
+        //std::cout << std::endl;
+        
+    }
+};
+
+
 class NodePtr
 {
 public:
@@ -37,6 +60,7 @@ class CodeNode
 public:
     uint8_t code;
     int count;
+    BitCode bitCode;
 };
 
 
@@ -54,28 +78,6 @@ public:
     }
 };
 
-
-class BitCode
-{
-    std::vector<bool> data;
-public:
-    void addBit(int value)// 0 or 1
-    {
-        data.push_back(value != 0);
-    }
-    
-    void print()
-    {
-        std::cout << "Code:";
-        for( auto d: data )
-        {
-            std::cout << (d?1:0);
-        }
-        
-        std::cout << std::endl;
-        
-    }
-};
 
 
 class Tree
@@ -265,7 +267,16 @@ public:
         // BitCode
         if( currNodePtr.codeLine )
         {  // all found
-            std::cout << "Full code:";
+            
+            // class CodeNode
+            // uint8_t code;
+            // int count;
+            
+            uint8_t symbol = codeLine[currNodePtr.pos].code;
+            
+            codeLine[currNodePtr.pos].bitCode = currCode;
+            
+            std::cout << "Full sym=" << symbol << " code:";
             currCode.print();
             std::cout << std::endl;
             return;
@@ -286,13 +297,13 @@ public:
             NodePtr &ptr1 = currNode.prev[0];
             
             BitCode code1 = currCode;
-            code1.addBit(0);
+            code1.addBit(1);
             processNodePath(ptr1, code1);
             
             
             NodePtr &ptr2 = currNode.prev[1];
             BitCode code2 = currCode;
-            code2.addBit(1);
+            code2.addBit(0);
             processNodePath(ptr2, code2);
 
             
@@ -329,8 +340,25 @@ public:
         // NodePtr(bool _codeLine, int _pos, int _count)
         NodePtr startCreateNodePtr = NodePtr(false,innerLine.size()-1,0);
         processNodePath(startCreateNodePtr, startCode);
+        
+        printAllBitCodes();
 
         
+
+    }
+    
+    void printAllBitCodes()
+    {
+        std::cout << "----- Final bit codes -----" << std::endl;
+        //std::vector<CodeNode> codeLine;
+        for( auto node: codeLine )
+        {
+            uint8_t symbol = node.code;
+            std::cout << "Full sym=" << symbol << " code:";
+            node.bitCode.print();
+            std::cout << std::endl;
+        }
+        std::cout << "---------------------------" << std::endl;
 
     }
 };
@@ -617,17 +645,41 @@ public:
         std::vector<CodeNode> nodes = statistics.getCodeNodes();
         
         //-----------
+#if 0
         nodes.clear();
         nodes.push_back(CodeNode({'A',1}));
         nodes.push_back(CodeNode({'B',1}));
         nodes.push_back(CodeNode({'C',3}));
         nodes.push_back(CodeNode({'D',5}));
         nodes.push_back(CodeNode({'E',5}));
-        nodes.push_back(CodeNode({'D',7}));
+        nodes.push_back(CodeNode({'F',7}));
+#endif
 
+#if 0
+        nodes.clear();
+        nodes.push_back(CodeNode({'A',50}));
+        nodes.push_back(CodeNode({'B',1000}));
+#endif
+        
+#if 0
+        nodes.clear();
+        nodes.push_back(CodeNode({'A',50}));
+        nodes.push_back(CodeNode({'B',1000}));
+        nodes.push_back(CodeNode({'C',3}));
+#endif
+        
+#if 1
+        nodes.clear();
+        nodes.push_back(CodeNode({'A',1}));
+        nodes.push_back(CodeNode({'B',1}));
+        nodes.push_back(CodeNode({'C',1}));
+        nodes.push_back(CodeNode({'D',1}));
+        nodes.push_back(CodeNode({'E',1}));
+        nodes.push_back(CodeNode({'F',1}));
+        nodes.push_back(CodeNode({'G',1}));
+        nodes.push_back(CodeNode({'H',1}));
+#endif
 
-        
-        
         //-----------
         
         tree.setCodeLine(nodes);
