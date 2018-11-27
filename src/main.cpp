@@ -162,7 +162,6 @@ public:
 };
 
 
-
 class Tree
 {
 public:
@@ -174,8 +173,44 @@ public:
     std::vector<CodeNode> codeLine;
     std::vector<InnerNode> innerLine;
     
+    BitCode alphabet[256];
+    
     int codeIterator;
     int innerIterator;
+    
+    void initAlphabet()
+    {
+        for(auto&d:alphabet) d = BitCode();
+    }
+    
+    void fillAlphabet()
+    {
+        for( auto codeNode: codeLine )
+        {
+            std::cout << ":";
+            // class CodeNode
+//            {
+//            public:
+//                uint8_t code;
+//                int count;
+//                BitCode bitCode;
+//            };
+            
+            alphabet[codeNode.code] = codeNode.bitCode;
+        }
+        
+        std::cout << "============ Alhpabet ===============" << std::endl;
+        for(int k = 0; k < 256; k++)
+        {
+            auto b = alphabet[k];
+            std::cout << "k=" << k << " " << char(k) << " ";
+            b.print();
+            std::cout << std::endl;
+            
+        }
+        std::cout << "=====================================" << std::endl;
+
+    }
     
     
     void setCodeLine(std::vector<CodeNode> nodes)
@@ -427,6 +462,8 @@ public:
 
         createWriteBlock();
         
+        fillAlphabet();
+        
 
         
 
@@ -648,7 +685,7 @@ public:
         nodes.push_back(CodeNode({'F',1}));
         nodes.push_back(CodeNode({'G',1}));
         nodes.push_back(CodeNode({'H',1}));
-        nodes.push_back(CodeNode({'J',1000}));
+        nodes.push_back(CodeNode({'I',1000}));
 #endif
 
         //-----------
