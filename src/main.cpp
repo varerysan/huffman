@@ -6,12 +6,22 @@
 #include <array>
 #include <vector>
 #include <algorithm>
+//#include <pair>
 
 
 
 //---------------------
 // Just to test Node classes with or without codes
 
+
+void printBinary(uint8_t data)
+{
+    for(int k = 0; k < 8; k++ )
+    {
+        std::cout << ((data & 0x80)?1:0);
+        data <<= 1;
+    }
+}
 
 class BitCode
 {
@@ -32,6 +42,22 @@ public:
         
         //std::cout << std::endl;
         
+    }
+    
+    std::pair<uint8_t, int> getByte()
+    {
+        std::pair<uint8_t, int> result;
+        uint8_t value = 0;
+        for( auto d: data )
+        {
+            value = (value <<  1) | (d?1:0);
+        }
+        
+        //value <<= ( 8 - data.size() );
+        
+        result.first = value;
+        result.second  = data.size();
+        return result;
     }
 };
 
@@ -283,6 +309,7 @@ public:
             
             std::cout << "Full sym=" << symbol << " code:";
             currCode.print();
+            
             std::cout << std::endl;
             return;
         }
@@ -361,6 +388,12 @@ public:
             uint8_t symbol = node.code;
             std::cout << "Full sym=" << symbol << " code:";
             node.bitCode.print();
+            
+            auto bits = node.bitCode.getByte();
+            std::cout << " Byte=";
+            printBinary(bits.first);
+            std::cout << " len=" << bits.second;
+            
             std::cout << std::endl;
         }
         std::cout << "---------------------------" << std::endl;
@@ -478,6 +511,28 @@ public:
     }
 };
 
+// Class to write
+class WriterBlock
+{
+    std::vector<uint8_t> data;
+    int currBit;
+    uint8_t currByte;
+    
+    
+    
+    WriterBlock() : currBit(0), currByte(0)
+    {
+        
+        
+    }
+    
+    void addBitCode(BitCode bitCode)
+    {
+        
+    }
+    
+};
+
 
 class Processor
 {
@@ -549,6 +604,7 @@ public:
         nodes.push_back(CodeNode({'F',1}));
         nodes.push_back(CodeNode({'G',1}));
         nodes.push_back(CodeNode({'H',1}));
+        nodes.push_back(CodeNode({'J',1000}));
 #endif
 
         //-----------
