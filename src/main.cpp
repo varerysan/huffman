@@ -14,11 +14,11 @@
 // Just to test Node classes with or without codes
 
 
-void printBinary(uint8_t data)
+void printBinary(uint32_t data)
 {
-    for(int k = 0; k < 8; k++ )
+    for(int k = 0; k < 32; k++ )
     {
-        std::cout << ((data & 0x80)?1:0);
+        std::cout << ((data & 0x80000000)?1:0);
         data <<= 1;
     }
 }
@@ -44,10 +44,10 @@ public:
         
     }
     
-    std::pair<uint8_t, int> getByte()
+    std::pair<uint32_t, int> getByte()
     {
-        std::pair<uint8_t, int> result;
-        uint8_t value = 0;
+        std::pair<uint32_t, int> result;
+        uint32_t value = 0;
         for( auto d: data )
         {
             value = (value <<  1) | (d?1:0);
@@ -106,6 +106,58 @@ public:
         prev[0] = ptr1;
         prev[1] = ptr2;
         count = _count;
+    }
+};
+
+
+// Class to write
+class WriterBlock
+{
+public:
+    std::vector<uint8_t> data;
+    int currBit;
+    uint8_t currByte;
+    
+    WriterBlock() : currBit(0), currByte(0)
+    {
+        
+    }
+    
+    void addBitCode(BitCode bitCode)
+    {
+        auto bits = bitCode.getByte();
+        
+        for( int k = 0; k < bits.second; k++ )
+        {
+            if( currBit == 8 )
+            {
+                data.push_back( currByte );
+                currByte = 0;
+                currBit = 0;
+            }
+            
+            currByte |= (bits.first & 1) << 7;
+            currBit++;
+            
+        }
+    }
+    
+    void print()
+    {
+        std::cout << "----- WriterBlock -----" << std::endl;
+        std::cout << "currBit=" << currBit << std::endl;
+        std::cout << "currByte=";
+        printBinary(currByte);
+        std::cout << std::endl;
+        for( auto d: data)
+        {
+            printBinary(d);
+            std::cout << std::endl;
+        }
+        
+        std::cout << "----------------------------" << std::endl;
+        
+        
     }
 };
 
@@ -340,9 +392,6 @@ public:
 
             
         }
-        
-        
-        
     
     }
     
@@ -374,9 +423,26 @@ public:
         processNodePath(startCreateNodePtr, startCode);
         
         printAllBitCodes();
+        
+
+        createWriteBlock();
+        
 
         
 
+    }
+    
+    void createWriteBlock()
+    {
+        // Create block
+        WriterBlock writeBlock;
+        for( auto node: codeLine )
+        {
+            writeBlock.addBitCode(node.bitCode);
+        }
+        
+        writeBlock.print();
+        
     }
     
     void printAllBitCodes()
@@ -397,6 +463,7 @@ public:
             std::cout << std::endl;
         }
         std::cout << "---------------------------" << std::endl;
+        
 
     }
 };
@@ -511,29 +578,6 @@ public:
     }
 };
 
-// Class to write
-class WriterBlock
-{
-    std::vector<uint8_t> data;
-    int currBit;
-    uint8_t currByte;
-    
-    
-    
-    WriterBlock() : currBit(0), currByte(0)
-    {
-        
-        
-    }
-    
-    void addBitCode(BitCode bitCode)
-    {
-        
-    }
-    
-};
-
-
 class Processor
 {
 public:
@@ -621,6 +665,8 @@ public:
         tree.createTreeCodes();
         
         //
+        
+
 
         
         
