@@ -14,11 +14,12 @@
 // Just to test Node classes with or without codes
 
 
-void printBinary(uint32_t data)
+void printBinary(uint32_t data, int size)
 {
-    for(int k = 0; k < 32; k++ )
+    for(int k = 0; k < size; k++ )
     {
-        std::cout << ((data & 0x80000000)?1:0);
+//        std::cout << ((data & 0x80000000)?1:0);
+        std::cout << ( (data & (1<<(size-1))?1:0));
         data <<= 1;
     }
 }
@@ -117,41 +118,64 @@ public:
     std::vector<uint8_t> data;
     int currBit;
     uint8_t currByte;
+    int count;
     
-    WriterBlock() : currBit(0), currByte(0)
+    WriterBlock() : currBit(0), currByte(0), count(0)
     {
         
     }
     
     void addBitCode(BitCode bitCode)
     {
+        count++;
+        std::cout << "addBitCode = " ;
+        bitCode.print();
+        std::cout << std::endl;
         auto bits = bitCode.getByte();
         
+        auto allbits = bits.first;
+        allbits <<= (32 - bits.second);
+        std::cout << "allbits=";
+        printBinary(allbits, sizeof(allbits)*8);
+        std::cout << std::endl;
         for( int k = 0; k < bits.second; k++ )
         {
+            currByte = (currByte << 1) | (  (allbits & 0x80000000) >> 31 );
+            allbits <<= 1;
+            currBit++;
+
             if( currBit == 8 )
             {
                 data.push_back( currByte );
                 currByte = 0;
                 currBit = 0;
             }
-            
-            currByte |= (bits.first & 1) << 7;
-            currBit++;
-            
+        }
+        
+    }
+    
+    void close()
+    {
+        if(currBit != 0)
+        {
+            currByte <<= (8-currBit);
+            data.push_back(currByte);
+            currBit = 0;
         }
     }
     
     void print()
     {
         std::cout << "----- WriterBlock -----" << std::endl;
+        std::cout << "count=" << count << std::endl;
         std::cout << "currBit=" << currBit << std::endl;
         std::cout << "currByte=";
-        printBinary(currByte);
+        printBinary(currByte,sizeof(currByte)*8);
         std::cout << std::endl;
+        std::cout << "Data:" << std::endl;
         for( auto d: data)
         {
-            printBinary(d);
+            printBinary(d, sizeof(d)*8);
             std::cout << std::endl;
         }
         
@@ -471,14 +495,14 @@ public:
     
     void createWriteBlock()
     {
-        // Create block
-        WriterBlock writeBlock;
-        for( auto node: codeLine )
-        {
-            writeBlock.addBitCode(node.bitCode);
-        }
-        
-        writeBlock.print();
+//        // Create block
+//        WriterBlock writeBlock;
+//        for( auto node: codeLine )
+//        {
+//            writeBlock.addBitCode(node.bitCode);
+//        }
+//
+//        writeBlock.print();
         
     }
     
@@ -494,7 +518,7 @@ public:
             
             auto bits = node.bitCode.getByte();
             std::cout << " Byte=";
-            printBinary(bits.first);
+            printBinary(bits.first, sizeof(bits.first)*8);
             std::cout << " len=" << bits.second;
             
             std::cout << std::endl;
@@ -502,6 +526,33 @@ public:
         std::cout << "---------------------------" << std::endl;
         
 
+    }
+    
+    
+    void encode(std::vector<uint8_t> data)
+    {
+        WriterBlock writeBlock;
+        std::cout << "----------- encode -------------" << std::endl;
+        for( auto d: data )
+        {
+            auto bits = alphabet[d];
+            std::cout << d << " ";
+            bits.print();
+            std::cout << std::endl;
+            writeBlock.addBitCode(bits);
+        }
+        writeBlock.close();
+        
+        std::cout << "-------------------------------" << std::endl;
+        
+        std::cout << "---------- encoded -----------" << std::endl;
+
+        writeBlock.print();
+
+        std::cout << "-------------------------------" << std::endl;
+
+        
+        
     }
 };
 
@@ -702,6 +753,9 @@ public:
         tree.createTreeCodes();
         
         //
+        std::vector<uint8_t> originalData = {'A', 'C', 'I', 'G', 'C'};
+        
+        tree.encode(originalData);
         
 
 
