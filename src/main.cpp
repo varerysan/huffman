@@ -753,7 +753,7 @@ public:
         tree.createTreeCodes();
         
         //
-        std::vector<uint8_t> originalData = {'A', 'C', 'I', 'G', 'C'};
+        std::vector<uint8_t> originalData = {'A', 'C', 'I', 'G', 'C', 'I', 'E'};
         
         tree.encode(originalData);
         
