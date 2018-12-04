@@ -756,6 +756,13 @@ public:
         std::vector<uint8_t> originalData = {'A', 'C', 'I', 'G', 'C', 'I', 'E'};
         
         tree.encode(originalData);
+
+
+        // create decode tree
+        // Try decode 
+        
+        
+
         
 
 
@@ -783,6 +790,12 @@ public:
         statistics.printPairs();
     }
 
+};
+
+void decoder()
+{
+    
+    
 };
 
 void read()
