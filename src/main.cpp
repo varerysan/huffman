@@ -93,6 +93,7 @@ public:
     uint8_t code;
     int count;
     BitCode bitCode;
+    //int parentID;
 };
 
 
@@ -101,7 +102,8 @@ class InnerNode
 public:
     int count;
     NodePtr prev[2];
-    
+    //int parentID;
+
     InnerNode(const NodePtr& ptr1, const NodePtr& ptr2, int _count)
     {
         prev[0] = ptr1;
@@ -184,6 +186,57 @@ public:
         
     }
 };
+
+class DecoderNodePtr
+{
+public:
+    //uint8_t data;
+    bool isPtr; // True if pointer 
+    int pos;
+};
+
+class DecoderNode
+{
+public:
+    DecoderNodePtr prev[2];
+};
+
+class DecoderTree
+{
+public:
+    std::vector<DecoderNodePtr> line;
+};
+
+#if 0
+
+class CodeNode
+{
+public:
+    uint8_t code;
+    int count;
+    BitCode bitCode;
+    //int parentID;
+};
+
+
+class InnerNode
+{
+public:
+    int count;
+    NodePtr prev[2];
+    //int parentID;
+
+    
+    InnerNode(const NodePtr& ptr1, const NodePtr& ptr2, int _count)
+    {
+        prev[0] = ptr1;
+        prev[1] = ptr2;
+        count = _count;
+    }
+};
+
+#endif
+
 
 
 class Tree
@@ -323,36 +376,25 @@ public:
             std::cout << "id=" << id
                       << " count=" << c.count
                       << " codeLine=" << c.codeLine
-                      << " pos=" << c.pos << std::endl;
-            
+                      << " pos=" << c.pos << std::endl;            
             id++;
-            
         }
         std::cout << "--- compare end ---" << std::endl;
-
-        
+      
         if( compare.size() >= 2 )
         {
             std::cout << "--- compare.size() >= 2. Before sort" << std::endl;
-
             sort(compare.begin(), compare.end());
-            
             std::cout << "--- After sort" << std::endl;
-
             connectTwoNodes(compare[0], compare[1]);
-            
             std::cout << "--- return true " << std::endl;
-
             return true;
         }
         else
         {
             std::cout << "--- compare.size() < 2 " << std::endl;
-
             // tree was built
-            
             std::cout << "--- return false " << std::endl;
-
             return false;
         }
     }
@@ -363,8 +405,7 @@ public:
         while(connectMin())
         {
         }
-    }
-    
+    }    
     
     void print()
     {
@@ -377,8 +418,7 @@ public:
             std::cout << "c=" << count << std::endl;
         }
         std::cout << "----------------------" << std::endl;
-
-        
+   
         std::cout << "----- Inner line -----" << std::endl;
         for( auto &node: innerLine )
         {
@@ -395,7 +435,6 @@ public:
                       << "(" << c1 << ")"
                       << " pos2=" << pos2
                       << "(" << c2 << ")"
-
 
             << std::endl;
         }
@@ -447,11 +486,8 @@ public:
             NodePtr &ptr2 = currNode.prev[1];
             BitCode code2 = currCode;
             code2.addBit(0);
-            processNodePath(ptr2, code2);
-
-            
+            processNodePath(ptr2, code2);        
         }
-    
     }
     
     void createTreeCodes()
@@ -472,7 +508,6 @@ public:
         std::cout << "pos1=" << pos1 << std::endl;
         std::cout << "pos2=" << pos2 << std::endl;
 
-
         std::cout << "End createTreeCodes()" << std::endl;
         
         BitCode startCode;
@@ -482,15 +517,8 @@ public:
         processNodePath(startCreateNodePtr, startCode);
         
         printAllBitCodes();
-        
-
         createWriteBlock();
-        
         fillAlphabet();
-        
-
-        
-
     }
     
     void createWriteBlock()
@@ -524,11 +552,8 @@ public:
             std::cout << std::endl;
         }
         std::cout << "---------------------------" << std::endl;
-        
-
     }
-    
-    
+      
     void encode(std::vector<uint8_t> data)
     {
         WriterBlock writeBlock;
@@ -541,18 +566,22 @@ public:
             std::cout << std::endl;
             writeBlock.addBitCode(bits);
         }
+
         writeBlock.close();
-        
         std::cout << "-------------------------------" << std::endl;
-        
         std::cout << "---------- encoded -----------" << std::endl;
-
         writeBlock.print();
-
         std::cout << "-------------------------------" << std::endl;
 
-        
-        
+    }
+
+    DecoderTree createDecoderTree()
+    {
+        DecoderTree decoderTree;
+
+
+
+
     }
 };
 
@@ -760,8 +789,38 @@ public:
 
         // create decode tree
         // Try decode 
-        
-        
+            
+        /*
+
+        class DecoderNodePtr
+        {
+            //uint8_t data;
+            bool isPtr; // True if pointer 
+            int pos;
+        };
+
+        class DecoderNode
+        {
+            DecoderNodePtr prev[2];
+        };
+
+        class DecoderTree
+        {
+            std::vector<DecoderNodePtr> line;
+        };
+
+
+        */
+
+       DecoderTree decoderTree;
+
+/*
+       for( auto k: )
+       {
+
+       }
+*/
+
 
         
 
