@@ -575,9 +575,38 @@ public:
 
     }
 
+#if 0
+
+class DecoderNodePtr
+{
+public:
+    //uint8_t data;
+    bool isPtr; // True if pointer 
+    int pos;
+};
+
+class DecoderNode
+{
+public:
+    DecoderNodePtr prev[2];
+};
+
+class DecoderTree
+{
+public:
+    std::vector<DecoderNodePtr> line;
+};
+
+#endif
+
+
     DecoderTree createDecoderTree()
     {
         DecoderTree decoderTree;
+        for(auto k: codeLine)
+        {
+
+        }
 
 
 
